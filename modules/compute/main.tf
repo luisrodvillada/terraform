@@ -34,6 +34,7 @@ resource "aws_security_group" "compute_sg" {
 
 resource "aws_instance" "compute_spot" {
   ami                    = data.aws_ami.compute_amazon_linux.id
+  iam_instance_profile = aws_iam_instance_profile.ec2_static_profile.name
   instance_type          = var.compute_instance_type
   subnet_id              = var.compute_public_subnet_id
   availability_zone      = var.compute_az
@@ -45,17 +46,54 @@ resource "aws_instance" "compute_spot" {
 
 
   user_data = <<-EOF
-    #!/bin/bash
-    yum update -y
+  #!/bin/bash
+  yum update -y
+  yum install -y awscli
 
-    yum install -y awscli
+  amazon-linux-extras install nginx1 -y
+  systemctl enable nginx
+  systemctl start nginx
 
-    amazon-linux-extras install nginx1 -y
-    systemctl start nginx
-    systemctl enable nginx
+  mkdir -p /usr/share/nginx/html
 
-    echo "<h1>Terraform Web Server</h1>" > /usr/share/nginx/html/index.html
-  EOF
+  # Script de sincronización
+  cat <<'SYNC' > /usr/local/bin/s3-sync.sh
+  #!/bin/bash
+  aws s3 sync s3://${var.static_s3_bucket_name} /usr/share/nginx/html --delete
+  SYNC
+
+  chmod +x /usr/local/bin/s3-sync.sh
+
+  # Servicio systemd
+  cat <<'SERVICE' > /etc/systemd/system/s3-sync.service
+  [Unit]
+  Description=Sync S3 static site to NGINX
+  After=network.target
+
+  [Service]
+  Type=oneshot
+  ExecStart=/usr/local/bin/s3-sync.sh
+  SERVICE
+
+  # Timer systemd (cada 5 minutos)
+  cat <<'TIMER' > /etc/systemd/system/s3-sync.timer
+  [Unit]
+  Description=Run S3 sync every 5 minutes
+
+  [Timer]
+  OnBootSec=1min
+  OnUnitActiveSec=5min
+  Persistent=true
+
+  [Install]
+  WantedBy=timers.target
+  TIMER
+
+  systemctl daemon-reexec
+  systemctl daemon-reload
+  systemctl enable s3-sync.timer
+  systemctl start s3-sync.timer
+EOF
 
   tags = merge(
     {
