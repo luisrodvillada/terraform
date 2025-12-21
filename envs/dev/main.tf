@@ -22,10 +22,18 @@ module "static_site_s3" {
   local_static_path  = "../../catalogo"
 }
 
+module "alb" {
+  source = "../../modules/alb"
+
+  alb_name          = "web-alb-dev"
+  vpc_id            = module.networking.vpc_id
+  public_subnet_ids = module.networking.public_subnet_ids
+}
+
 module "compute" {
   source = "../../modules/compute"
 
-  # 🔴 OBLIGATORIAS (YA EXISTÍAN)
+  # 🔹 VARIABLES OBLIGATORIAS DEL COMPUTE
   compute_vpc_id           = module.networking.vpc_id
   compute_public_subnet_id = module.networking.public_subnet_ids[0]
   compute_az               = "us-west-2a"
@@ -36,17 +44,10 @@ module "compute" {
     Project     = "terraform-web"
   }
 
-  # 🆕 NUEVA (IAM S3)
+  # 🔹 S3 (WEB ESTÁTICA)
   static_s3_bucket_name = module.static_site_s3.static_bucket_name
+
+  # 🔹 ALB (CONEXIÓN CORRECTA)
+  alb_target_group_arn  = module.alb.target_group_arn
+  alb_security_group_id = module.alb.alb_security_group_id
 }
-
-//Llamada de ALB
-
-module "alb" {
-  source = "../../modules/alb"
-
-  alb_name          = "web-alb-dev"
-  vpc_id            = module.networking.vpc_id
-  public_subnet_ids = module.networking.public_subnet_ids
-}
-

@@ -9,9 +9,10 @@ resource "aws_security_group" "compute_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+//   cidr_blocks = ["0.0.0.0/0"]
   }
 
+  
   ingress {
     description = "HTTP"
     from_port   = 80
@@ -26,6 +27,22 @@ resource "aws_security_group" "compute_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+
+  ingress {
+  description     = "HTTP from ALB"
+  from_port       = 80
+  to_port         = 80
+  protocol        = "tcp"
+  security_groups = [var.alb_security_group_id]
+}
+
+
+
+
+
+
+
 
   tags = var.compute_tags
 }
@@ -134,5 +151,20 @@ resource "tls_private_key" "compute_ssh" {
 output "compute_private_key_pem" {
   value     = tls_private_key.compute_ssh.private_key_pem
   sensitive = true
+}
+
+//Llamada a ALB
+
+variable "alb_target_group_arn" {
+  type = string
+}
+
+
+//Añadir target group a EC2
+
+resource "aws_lb_target_group_attachment" "this" {
+  target_group_arn = var.alb_target_group_arn
+  target_id        = aws_instance.compute_spot.id
+  port             = 80
 }
 

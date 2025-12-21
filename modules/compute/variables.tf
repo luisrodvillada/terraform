@@ -78,3 +78,7 @@ resource "aws_iam_instance_profile" "ec2_static_profile" {
   name = "ec2-static-site-profile"
   role = aws_iam_role.ec2_static_role.name
 }
+
+variable "alb_security_group_id" {
+  type = string
+}
