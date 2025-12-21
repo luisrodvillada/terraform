@@ -39,3 +39,14 @@ module "compute" {
   # 🆕 NUEVA (IAM S3)
   static_s3_bucket_name = module.static_site_s3.static_bucket_name
 }
+
+//Llamada de ALB
+
+module "alb" {
+  source = "../../modules/alb"
+
+  alb_name          = "web-alb-dev"
+  vpc_id            = module.networking.vpc_id
+  public_subnet_ids = module.networking.public_subnet_ids
+}
+
