@@ -28,3 +28,14 @@ variable "private_subnet_cidrs" {
     "10.0.102.0/24"
   ]
 }
+
+variable "asg_ami_id" {
+  default = "ami-03f65b8614a860c29"
+}
+
+
+variable "key_name" {
+  description = "EC2 SSH key pair name"
+  type        = string
+}
+

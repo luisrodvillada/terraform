@@ -51,3 +51,18 @@ module "compute" {
   alb_target_group_arn  = module.alb.target_group_arn
   alb_security_group_id = module.alb.alb_security_group_id
 }
+
+# Llamar a ASG
+
+module "asg" {
+  source = "../../modules/asg"
+
+  asg_ami_id             = var.asg_ami_id
+  asg_key_name           = "mi-key"
+  asg_user_data          = file("../../modules/asg/user-data.sh")
+  asg_security_group_ids = [module.alb.alb_security_group_id]
+  asg_public_subnet_ids  = module.networking.public_subnet_ids
+  asg_target_group_arn   = module.alb.target_group_arn
+  asg_s3_bucket_name     = module.static_site_s3.static_bucket_name
+}
+
