@@ -137,4 +137,4 @@ Cost-optimized using Spot instances
 
 High availability via ALB + ASG
 
-Reproducible, testable, and interview-ready
+Resources 78 Total
