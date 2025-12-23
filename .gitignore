@@ -6,3 +6,8 @@
 # Terraform lock files (generated per module)
 **/.terraform.lock.hcl
 .terraform.lock.hcl
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
