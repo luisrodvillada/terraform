@@ -137,8 +137,6 @@ Cost-optimized using Spot instances
 
 High availability via ALB + ASG
 
-Resources 78 Total
-Resources 83 with RDS postgress --AMP
+Resources 91 Total
 
-Resources 85 with S3-for-logs
 
