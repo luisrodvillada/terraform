@@ -9,16 +9,31 @@ resource "aws_security_group" "compute_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-//   cidr_blocks = ["0.0.0.0/0"]
+    # cidr_blocks = ["0.0.0.0/0"]
   }
 
-  
+  ingress {
+    description = "PostgreSQL TEMP testing backend to RDS"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   ingress {
     description = "HTTP"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description     = "HTTP from ALB"
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [var.alb_security_group_id]
   }
 
   egress {
@@ -28,24 +43,9 @@ resource "aws_security_group" "compute_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-
-  ingress {
-  description     = "HTTP from ALB"
-  from_port       = 80
-  to_port         = 80
-  protocol        = "tcp"
-  security_groups = [var.alb_security_group_id]
-}
-
-
-
-
-
-
-
-
   tags = var.compute_tags
 }
+
 
 //Instancia
 

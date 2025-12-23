@@ -66,3 +66,35 @@ module "asg" {
   asg_s3_bucket_name     = module.static_site_s3.static_bucket_name
 }
 
+//Parametros SSM para RDS - Credenciales seguras
+
+resource "aws_ssm_parameter" "db_username" {
+  name  = "/app/db/username"
+  type  = "String"
+  value = "appuser"
+}
+
+resource "aws_ssm_parameter" "db_password" {
+  name  = "/app/db/password"
+  type  = "SecureString"
+  value = "CAMBIA_ESTO_POR_ALGO_SEGURO"
+}
+
+
+//Llamar modulo RDS
+
+module "rds" {
+  source = "../../modules/rds"
+
+  vpc_id             = module.networking.vpc_id
+  private_subnet_ids = module.networking.private_subnet_ids
+
+  db_name     = "appdb"
+  db_username = aws_ssm_parameter.db_username.value
+  db_password = aws_ssm_parameter.db_password.value
+  alb_security_group_id = module.alb.alb_sg_id
+  backend_sg_id = module.compute.compute_sg_id
+  environment   = "dev"
+}
+
+
