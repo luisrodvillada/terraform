@@ -8,13 +8,13 @@ resource "aws_launch_template" "this" {
 
   vpc_security_group_ids = var.asg_security_group_ids
 
-user_data = base64encode(
-  replace(
-    var.asg_user_data,
-    "$${ASG_S3_BUCKET}",
-    var.asg_s3_bucket_name
+  user_data = base64encode(
+    replace(
+      var.asg_user_data,
+      "$${ASG_S3_BUCKET}",
+      var.asg_s3_bucket_name
+    )
   )
-)
 
 
   tag_specifications {

@@ -51,13 +51,13 @@ resource "aws_security_group" "compute_sg" {
 
 resource "aws_instance" "compute_spot" {
   ami                    = data.aws_ami.compute_amazon_linux.id
-  iam_instance_profile = aws_iam_instance_profile.ec2_static_profile.name
+  iam_instance_profile   = aws_iam_instance_profile.ec2_static_profile.name
   instance_type          = var.compute_instance_type
   subnet_id              = var.compute_public_subnet_id
   availability_zone      = var.compute_az
   vpc_security_group_ids = [aws_security_group.compute_sg.id]
   key_name               = aws_key_pair.compute_key.key_name
-  
+
 
 
 

@@ -28,7 +28,7 @@ module "alb" {
   alb_name          = "web-alb-dev"
   vpc_id            = module.networking.vpc_id
   public_subnet_ids = module.networking.public_subnet_ids
-  alb_logs_bucket = module.s3.bucket_name
+  alb_logs_bucket   = module.s3.bucket_name
 
 }
 
@@ -91,12 +91,12 @@ module "rds" {
   vpc_id             = module.networking.vpc_id
   private_subnet_ids = module.networking.private_subnet_ids
 
-  db_name     = "appdb"
-  db_username = aws_ssm_parameter.db_username.value
-  db_password = aws_ssm_parameter.db_password.value
+  db_name               = "appdb"
+  db_username           = aws_ssm_parameter.db_username.value
+  db_password           = aws_ssm_parameter.db_password.value
   alb_security_group_id = module.alb.alb_sg_id
-  backend_sg_id = module.compute.compute_sg_id
-  environment   = "dev"
+  backend_sg_id         = module.compute.compute_sg_id
+  environment           = "dev"
 }
 
 
@@ -116,7 +116,7 @@ module "s3" {
 module "cloudwatch_ec2" {
   source = "../../modules/cloudwatch"
 
-  environment        = "dev"
-  log_group_name     = "ec2"
-  retention_in_days  = 14
+  environment       = "dev"
+  log_group_name    = "ec2"
+  retention_in_days = 14
 }

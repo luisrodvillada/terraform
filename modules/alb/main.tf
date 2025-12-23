@@ -9,23 +9,23 @@ resource "aws_security_group" "alb_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-  
-ingress {
-  description = "PostgreSQL TEMP from EC2 to RDS"
-  from_port   = 5432
-  to_port     = 5432
-  protocol    = "tcp"
-  cidr_blocks = ["10.0.0.0/16"]
-}
+
+  ingress {
+    description = "PostgreSQL TEMP from EC2 to RDS"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
 
 
-ingress {
-  description = "SSH open TEMPORARY"
-  from_port   = 22
-  to_port     = 22
-  protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
-}
+  ingress {
+    description = "SSH open TEMPORARY"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
 
   egress {
@@ -51,7 +51,7 @@ resource "aws_lb" "this" {
     enabled = true
   }
 
- 
+
 
 }
 
