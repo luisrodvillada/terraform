@@ -98,3 +98,12 @@ module "rds" {
 }
 
 
+//Modulo de s3 para logs
+
+module "s3" {
+  source = "../../modules/s3"
+
+  bucket_name   = "project-dev-logs-luisrod"
+  environment   = "dev"
+  force_destroy = true
+}
