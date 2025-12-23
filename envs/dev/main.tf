@@ -109,3 +109,14 @@ module "s3" {
   environment   = "dev"
   force_destroy = true
 }
+
+
+//Cloudwatch
+
+module "cloudwatch_ec2" {
+  source = "../../modules/cloudwatch"
+
+  environment        = "dev"
+  log_group_name     = "ec2"
+  retention_in_days  = 14
+}
