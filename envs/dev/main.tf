@@ -28,6 +28,8 @@ module "alb" {
   alb_name          = "web-alb-dev"
   vpc_id            = module.networking.vpc_id
   public_subnet_ids = module.networking.public_subnet_ids
+  alb_logs_bucket = module.s3.bucket_name
+
 }
 
 module "compute" {

@@ -9,3 +9,8 @@ variable "vpc_id" {
 variable "public_subnet_ids" {
   type = list(string)
 }
+//Conecta S3 con ALB para logs
+variable "alb_logs_bucket" {
+  description = "S3 bucket name for ALB access logs"
+  type        = string
+}

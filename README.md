@@ -140,3 +140,5 @@ High availability via ALB + ASG
 Resources 78 Total
 Resources 83 with RDS postgress
 
+Resources 85 with S3-for-logs
+

@@ -44,7 +44,18 @@ resource "aws_lb" "this" {
 
   security_groups = [aws_security_group.alb_sg.id]
   subnets         = var.public_subnet_ids
+
+  access_logs {
+    bucket  = var.alb_logs_bucket
+    prefix  = "alb"
+    enabled = true
+  }
+
+ 
+
 }
+
+
 
 //Target group
 

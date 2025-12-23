@@ -41,3 +41,25 @@ resource "aws_s3_bucket_public_access_block" "this" {
   restrict_public_buckets = true
 }
 
+//Policy to Bucket ALB needed access to S3
+
+data "aws_elb_service_account" "this" {}
+
+resource "aws_s3_bucket_policy" "alb_logs" {
+  bucket = aws_s3_bucket.this.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowALBLogs"
+        Effect = "Allow"
+        Principal = {
+          AWS = data.aws_elb_service_account.this.arn
+        }
+        Action   = "s3:PutObject"
+        Resource = "${aws_s3_bucket.this.arn}/alb/*"
+      }
+    ]
+  })
+}
