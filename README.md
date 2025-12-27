@@ -1,8 +1,8 @@
 Project Overview
 
-This project provisions a production-like AWS infrastructure using Terraform, focused on high availability, scalability, and cost optimization.
+This project provisions a production-like AWS infrastructure (development environment) using Terraform, focused on high availability, scalability, and cost optimization.
 
-The architecture serves a static web application stored in S3, delivered through EC2 instances behind an Application Load Balancer, managed by an Auto Scaling Group with Spot instances.
+The architecture serves a static web application stored in S3, delivered through EC2 instances behind an Application Load Balancer, managed by an Auto Scaling Group using Spot instances.
 
 All infrastructure is fully reproducible (terraform destroy → terraform apply) and validated end-to-end.
 
@@ -29,7 +29,7 @@ EC2 instances download content from S3 at boot time
 
 Public ALB listening on HTTP :80
 
-Associated Target Group with health checks
+Target Group with health checks
 
 Routes traffic to:
 
@@ -37,7 +37,7 @@ A legacy EC2 instance (on-demand)
 
 EC2 instances managed by the ASG
 
-Fully tested using curl and browser access
+Fully tested via curl and browser access
 
 🖥️ Compute (Legacy EC2)
 
@@ -51,37 +51,43 @@ Uses Nginx to serve static content
 
 🔁 Auto Scaling Group (ASG)
 
-Dedicated Terraform module for ASG
+Dedicated Terraform module
 
 Spot instances only (cost-optimized)
 
-Uses a Launch Template
+Launch Template–based
 
 Min: 1 | Desired: 1 | Max: 2
 
-Integrated with the ALB Target Group
-
-Health checks via ALB
+Integrated with ALB Target Group
 
 Instance replacement tested successfully (terminate → auto-recreate)
 
 🔐 IAM & Security
 
-IAM Role attached to EC2/ASG instances
+IAM Role attached to EC2 / ASG instances
 
-Least-privilege access to S3 (GetObject, ListBucket)
+Least-privilege S3 access (GetObject, ListBucket)
 
 No hardcoded AWS credentials
 
-Security Groups managed via Terraform
+Security Groups fully managed via Terraform
 
-Temporary SSH access enabled for debugging (to be closed later)
+Temporary SSH access enabled for debugging (to be restricted later)
+
+📊 Observability
+
+ALB access logs enabled and stored in S3
+
+CloudWatch metrics available for ALB and EC2
+
+Infrastructure behavior observable without manual instance access
 
 ⚙️ User Data & Bootstrapping
 
-EC2 bootstrapped via user-data.sh
+EC2 instances bootstrapped via user-data.sh
 
-Steps performed on instance launch:
+On launch:
 
 Install Nginx and AWS CLI
 
@@ -89,7 +95,7 @@ Download website from S3
 
 Unzip and deploy content to /var/www/html
 
-Inject dynamic information into HTML:
+Inject dynamic runtime data into HTML:
 
 Hostname
 
@@ -100,15 +106,10 @@ Used to visually validate ALB load balancing and ASG replacement
 ✅ Validations Performed
 
 ✔ ALB listener and routing verified
-
 ✔ Target Group health checks passing
-
 ✔ ASG instance creation and replacement validated
-
-✔ Web availability confirmed through ALB endpoint
-
-✔ Infrastructure successfully recreated after full terraform destroy
-
+✔ Web availability confirmed via ALB endpoint
+✔ Infrastructure recreated after full terraform destroy
 ✔ No manual changes required in AWS Console
 
 📂 Project Structure
@@ -137,6 +138,4 @@ Cost-optimized using Spot instances
 
 High availability via ALB + ASG
 
-Resources 91 Total
-
-
+End-to-end validated, reproducible infrastructure
